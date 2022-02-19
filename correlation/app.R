@@ -108,7 +108,8 @@ server <- function(input, output) {
         return(list(df = df,line = line,
                     SS_Total = SS_Total,
                     SS_Treatment = SS_Treatment,
-                    SS_Error = SS_Error
+                    SS_Error = SS_Error,
+                    sample_size = sample_size
                     ))
         
     })
@@ -180,17 +181,25 @@ server <- function(input, output) {
         SS_Total = round(inform$SS_Total,3)
         SS_Treatment = round(inform$SS_Treatment,3)
         SS_Error = round(inform$SS_Error,3)
+        sample_size_button = inform$sample_size
         
         ## 2) Define R-Squared
         r_square = round(SS_Treatment/SS_Total,3)
         
-        
+        ## 3) Define Standard Deviation of Residuals
+        s_e = round(sqrt( SS_Error / (sample_size_button - 2)),3)
         
         
         
         
         withMathJax(
-            paste0("\\(R^2 = \\frac{SSTr}{SST} = \\frac{", SS_Treatment,"}{",SS_Total, "} = ", r_square," \\) " )
+            paste0("\\(R^2 = \\frac{SSTr}{SST} = \\frac{", SS_Treatment,"}{",SS_Total, "} = ", r_square," \\) " ),
+            paste0("\\(s_e = \\sqrt{\\frac{\\sum_{i=1}^n (y_i - \\hat{y})^2}{n-2}} = 
+                                           \\sqrt{\\frac{SSE}{n-2}} = 
+                                           \\sqrt{\\frac{",SS_Error,"}{",sample_size_button - 2,"}} = ",s_e," \\) ")
+                   
+                   
+                   
         )
         
     })
