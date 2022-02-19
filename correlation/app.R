@@ -61,7 +61,10 @@ ui <- fluidPage(
         mainPanel(
             plotOutput("regression_line_plot"),
             br(),
-            uiOutput("sums_of_square")
+            uiOutput("sums_of_square"),
+            br(),
+            uiOutput("reg_metrics"),
+            br()
         )
     )
 )
@@ -155,13 +158,40 @@ server <- function(input, output) {
         
     
             withMathJax(
-                paste0("\\(\\sum_{i=1}^n (y_i - \\bar{y})^2 =\\) ", round(SS_Total, 3)),
+                paste0("\\(SST = \\sum_{i=1}^n (y_i - \\bar{y})^2 =\\) ", round(SS_Total, 3)),
                 br(),
-                paste0("\\(\\sum_{i=1}^n (\\hat{y}_i - \\bar{y})^2 =\\) ", round(SS_Treatment, 3)),
+                paste0("\\(SSTr = \\sum_{i=1}^n (\\hat{y}_i - \\bar{y})^2 =\\) ", round(SS_Treatment, 3)),
                 br(),
-                paste0("\\(\\sum_{i=1}^n (y_i - \\hat{y})^2 =\\) ", round(SS_Error, 3)),
+                paste0("\\(SSE = \\sum_{i=1}^n (y_i - \\hat{y})^2 =\\) ", round(SS_Error, 3)),
                 br()
             )
+        
+    })
+    
+    
+    
+    
+    output$reg_metrics <- renderUI({
+        
+        
+        ## 0) Define bins button
+        inform <- inform()
+        ## 1) Gather SS: Total, Treatment & Error
+        SS_Total = round(inform$SS_Total,3)
+        SS_Treatment = round(inform$SS_Treatment,3)
+        SS_Error = round(inform$SS_Error,3)
+        
+        ## 2) Define R-Squared
+        r_square = round(SS_Treatment/SS_Total,3)
+        
+        
+        
+        
+        
+        
+        withMathJax(
+            paste0("\\(R^2 = \\frac{SSTr}{SST} = \\frac{", SS_Treatment,"}{",SS_Total, "} = ", r_square," \\) " )
+        )
         
     })
 }
