@@ -74,16 +74,34 @@ server <- function(input, output) {
         line = input$line
         
         ## 2) Generate Data
-        data = mvrnorm(n=sample_size_button, 
+        data = mvrnorm(n=sample_size, 
                        mu=c(0, 0), 
-                       Sigma=matrix(c(1, correlation_button, 
-                                      correlation_button, 1),nrow=2), 
+                       Sigma=matrix(c(1, correlation, 
+                                      correlation, 1),nrow=2), 
                        empirical=TRUE)
         
         ## 3) Turn Data into data frame
         df = data.frame(X = data[, 1], Y = data[, 2] )
         
-        return(list(df = df,line = line))
+        ## 4) Run Model
+        slr_model = lm(Y ~ X, data = df)
+        
+        ## 5) Define expected response variable values, observed response variables, sample mean of the response variable
+        y_hat = predict(slr_model)
+        y_obs = df$Y
+        y_mean = mean(y_obs)
+        
+        ## 6) Define Sums of Square: Total, Error, & Treatment
+        SS_Total = sum((y_obs - y_mean)^2)
+        SS_Error = sum((y_obs - y_hat)^2)
+        SS_Treatment = sum((y_hat - y_mean)^2)
+        
+        
+        return(list(df = df,line = line,
+                    SS_Total = SS_Total,
+                    SS_Treatment = SS_Treatment,
+                    SS_Error = SS_Error
+                    ))
         
     })
     
@@ -113,6 +131,32 @@ server <- function(input, output) {
             
         }
         
+        
+    })
+    
+    
+    
+    output$data <- renderUI({
+        
+        
+        ## 0) Define bins button
+        inform <- inform()
+        ## 1) Gather SS: Total, Treatment & Error
+        SS_Total = inform$SS_Total
+        SS_Treatment = inform$SS_Treatment
+        SS_Error = inform$SS_Error
+        
+        
+        
+    
+            withMathJax(
+                paste0("\\(\\sum_{i=1}^n (y_i - \\bar{y})^2 =\\) ", round(SS_Total, 3)),
+                br(),
+                paste0("\\(\\sum_{i=1}^n (\\hat{y}_i - \\bar{y})^2 =\\) ", round(SS_Treatment, 3)),
+                br(),
+                paste0("\\(\\sum_{i=1}^n (y_i - \\hat{y})^2 =\\) ", round(SS_Error, 3)),
+                br()
+            )
         
     })
 }
