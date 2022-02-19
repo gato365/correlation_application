@@ -24,16 +24,22 @@ data = mvrnorm(n=sample_size_button, mu=c(0, 0), Sigma=matrix(c(1,
 ## 3) Turn Data into data frame
 df = data.frame(X = data[, 1], Y = data[, 2] )
 
+## 4) Plot Data
+
 ## 5) Run Model
 slr_model = lm(Y ~ X, data = df)
 
-## 6) Define 
+summary(slr_model)
+
+## 6) Define expected response variable values, observed response variables, sample mean of the response variable
 y_hat = predict(slr_model)
 y_obs = df$Y
 y_mean = mean(y_obs)
 
 
-SST = sum()
-
+## 7) Define Sums of Square: Total, Error, & Treatment
+SS_Total = sum((y_obs - y_mean)^2)
+SS_Error = sum((y_obs - y_hat)^2)
+SS_Treatment = sum((y_hat - y_mean)^2)
 ```
 
