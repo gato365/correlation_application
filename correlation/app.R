@@ -8,6 +8,8 @@
 #
 
 library(shiny)
+library(MASS)
+suppressPackageStartupMessages(library(tidyverse))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
