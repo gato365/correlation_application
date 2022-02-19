@@ -10,6 +10,9 @@
 library(shiny)
 library(MASS)
 suppressPackageStartupMessages(library(tidyverse))
+library(rmarkdown)
+library(knitr)
+library(pander)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -56,7 +59,9 @@ ui <- fluidPage(
         
         # Show a plot of the generated distribution
         mainPanel(
-            plotOutput("regression_line_plot")
+            plotOutput("regression_line_plot"),
+            br(),
+            uiOutput("sums_of_square")
         )
     )
 )
@@ -136,7 +141,7 @@ server <- function(input, output) {
     
     
     
-    output$data <- renderUI({
+    output$sums_of_square <- renderUI({
         
         
         ## 0) Define bins button
