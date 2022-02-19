@@ -11,10 +11,10 @@ library(shiny)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
+    
     # Application title
     titlePanel("Correlation"),
-
+    
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
@@ -22,14 +22,17 @@ ui <- fluidPage(
                         "Number of bins:",
                         min = 1,
                         max = 50,
-                        value = 30)
+                        value = 30), 
+            
+            ## Define Action Button
+            actionButton("button","Calculate")
         ),
         
-        actionButton("button","Calculate")
-
+        
+        
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("distPlot")
+            plotOutput("distPlot")
         )
     )
 )
@@ -43,25 +46,30 @@ server <- function(input, output) {
         ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         ## Gather mean, standard devaition, sample size, and number of sds
         ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       bins = input$bins
-        return(list(bins))
+        bins = input$bins
+        return(list(bins = bins))
         
         
     })
     
     
-
+    
     output$distPlot <- renderPlot({
         ## Define bins button
+        inform <- inform()
         bins_button <- inform$bins
-            
-            
-        # generate bins based on input$bins from ui.R
+        
+        
+        ## generate bins based on input$bins from ui.R
         x    <- faithful[, 2]
         bins <- seq(min(x), max(x), length.out = bins_button + 1)
-
-        # draw the histogram with the specified number of bins
+        
+        
+        
+        ## 3) draw the histogram with the specified number of bins
         hist(x, breaks = bins, col = 'darkgray', border = 'white')
+        
+        
     })
 }
 
