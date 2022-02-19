@@ -56,7 +56,7 @@ ui <- fluidPage(
         
         # Show a plot of the generated distribution
         mainPanel(
-            plotOutput("distPlot")
+            plotOutput("regression_line_plot")
         )
     )
 )
@@ -71,38 +71,32 @@ server <- function(input, output) {
         ## 1) Get sample size, Correlation, display line
         sample_size = input$sample_size
         correlation = input$correlation
-        # line = input$line
+        line = input$line
         
+        ## 2) Generate Data
+        data = mvrnorm(n=sample_size_button, 
+                       mu=c(0, 0), 
+                       Sigma=matrix(c(1, correlation_button, 
+                                      correlation_button, 1),nrow=2), 
+                       empirical=TRUE)
         
+        ## 3) Turn Data into data frame
+        df = data.frame(X = data[, 1], Y = data[, 2] )
         
-        return(list(sample_size= sample_size, 
-                    correlation = correlation#,
-                    # line = line
-                    ))
-        
+        return(list(df = df,line = line))
         
     })
     
     
     
-    output$distPlot <- renderPlot({
+    output$regression_line_plot <- renderPlot({
         ## 0) Define bins button
         inform <- inform()
-        ## 1) Gather sample size, Correlation, display line
-        sample_size_button = inform$sample_size
-        correlation_button = inform$correlation
-        line_button = input$line #inform$line
+        ## 1) Gather df & display line
+        df = inform$df
+        line_button = inform$line
         
-        ## 2) Generate Data
-        data = mvrnorm(n=sample_size_button, mu=c(0, 0), Sigma=matrix(c(1, 
-                                                                      correlation_button,
-                                                                      correlation_button,
-                                                                      1), 
-                                                                    nrow=2), 
-                       empirical=TRUE)
-        
-        ## 3) Turn Data into data frame
-        df = data.frame(X = data[, 1], Y = data[, 2] )
+    
         
         
         
