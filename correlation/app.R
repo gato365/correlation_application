@@ -18,11 +18,25 @@ ui <- fluidPage(
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30), 
+          
+            
+            
+            ## Define the sample size
+            sliderInput("sample_size",
+                        h3("Sample Size:"),
+                        min = 10,
+                        max = 1000,
+                        value = 50),
+            ## Define the correlation value
+            sliderInput("correlation",
+                        h3("Correlation Value:"),
+                        min = -1,
+                        max = 1,
+                        value = 0,step = 0.01),
+            ## Display regression line
+            checkboxInput('line', 
+                          label = h3('Display Linear Line:'),
+                          value = FALSE),
             
             ## Define Action Button
             actionButton("button","Calculate")
@@ -43,11 +57,15 @@ server <- function(input, output) {
     
     inform <- eventReactive(input$button, {
         
-        ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ## Gather mean, standard devaition, sample size, and number of sds
-        ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        bins = input$bins
-        return(list(bins = bins))
+        
+        ## 1) Get sample size, Correlation, display line
+        sample_size = input$sample_size
+        correlation = input$correlation
+        line = input$line
+        
+        
+        
+        return(list(sample_size, correlation,line))
         
         
     })
@@ -55,19 +73,38 @@ server <- function(input, output) {
     
     
     output$distPlot <- renderPlot({
-        ## Define bins button
+        ## 0) Define bins button
         inform <- inform()
-        bins_button <- inform$bins
+        ## 1) Gather sample size, Correlation, display line
+        sample_size_button = inform$sample_size
+        correlation_button = inform$correlation
+        line_button = inform$line
+        
+        ## 2) Generate Data
+        data = mvrnorm(n=sample_size_button, mu=c(0, 0), Sigma=matrix(c(1, 
+                                                                      correlation_button,
+                                                                      correlation_button,
+                                                                      1), 
+                                                                    nrow=2), 
+                       empirical=TRUE)
+        
+        ## 3) Turn Data into data frame
+        df = data.frame(X = data[, 1], Y = data[, 2] )
         
         
-        ## generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = bins_button + 1)
         
-        
-        
-        ## 3) draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+        ## 4) Display graph
+        if(line_button == TRUE){ ## Display Line
+            ggplot(df,aes(x = X, y = Y)) +
+                geom_point() +
+                geom_smooth(method='lm', formula= y~x,se = FALSE,size =2) +
+                theme_bw()  
+        } else {               ## No Line
+            ggplot(df,aes(x = X, y = Y)) +
+                geom_point() +
+                theme_bw()
+            
+        }
         
         
     })
