@@ -23,24 +23,32 @@ ui <- fluidPage(
           
             
             
-            ## Define the sample size
+            ## 1) SliderinputDefine the sample size
             sliderInput("sample_size",
                         h3("Sample Size:"),
                         min = 10,
                         max = 1000,
                         value = 50),
-            ## Define the correlation value
+            
+            
+            ## 2) Sliderinput - Define the correlation value
             sliderInput("correlation",
                         h3("Correlation Value:"),
                         min = -1,
                         max = 1,
                         value = 0,step = 0.01),
-            ## Display regression line
+            
+            
+            
+            
+            ## 3) Checkbox - Display regression line
             checkboxInput('line', 
                           label = h3('Display Linear Line:'),
                           value = FALSE),
             
-            ## Define Action Button
+            
+            
+            ## 4) Button - Define Action Button
             actionButton("button","Calculate")
         ),
         
@@ -63,11 +71,14 @@ server <- function(input, output) {
         ## 1) Get sample size, Correlation, display line
         sample_size = input$sample_size
         correlation = input$correlation
-        line = input$line
+        # line = input$line
         
         
         
-        return(list(sample_size, correlation,line))
+        return(list(sample_size= sample_size, 
+                    correlation = correlation#,
+                    # line = line
+                    ))
         
         
     })
@@ -80,7 +91,7 @@ server <- function(input, output) {
         ## 1) Gather sample size, Correlation, display line
         sample_size_button = inform$sample_size
         correlation_button = inform$correlation
-        line_button = inform$line
+        line_button = input$line #inform$line
         
         ## 2) Generate Data
         data = mvrnorm(n=sample_size_button, mu=c(0, 0), Sigma=matrix(c(1, 
