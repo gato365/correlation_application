@@ -238,7 +238,7 @@ server <- function(input, output) {
         ## Create plot based on variability Explained
         var_df %>% 
             ggplot( aes( x = 1, y=percent_var, fill=condition)) + 
-            geom_bar( stat="identity",color = 'black') +
+            geom_bar( stat="identity",color = 'black', size=1.5) +
             geom_text(aes(label = percent(percent_var)), position = position_stack(vjust = 0.5), size = 8) +
             scale_y_continuous(name="", labels = percent) +
             scale_fill_manual(values=c("#999999", "#E69F00")) +
@@ -246,7 +246,10 @@ server <- function(input, output) {
             theme_bw() +
             theme(axis.title.y = element_blank(),
                   axis.text.y = element_blank(),
-                  axis.ticks.y = element_blank()) +
+                  axis.ticks.y = element_blank(),
+                  axis.text.x =  element_text(size = 13, color = 'black'),
+                  legend.text =element_text(size = 15),
+                  legend.title = element_text(size = 18, face = 'bold')) +
             coord_flip() 
         
         
