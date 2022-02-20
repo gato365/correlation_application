@@ -64,7 +64,10 @@ ui <- fluidPage(
             uiOutput("sums_of_square"),
             br(),
             uiOutput("reg_metrics"),
-            br()
+            br(),
+            br(),
+            br(),
+            plotOutput("total_variability_plot")
         )
     )
 )
@@ -124,8 +127,6 @@ server <- function(input, output) {
         line_button = inform$line
         
     
-        
-        
         
         ## 4) Display graph
         if(line_button == TRUE){ ## Display Line
@@ -213,6 +214,48 @@ server <- function(input, output) {
         )
         
     })
+   
+    
+    output$total_variability_plot <- renderPlot({
+        ## 0) Define bins button
+        inform <- inform()
+        ## 1) Gather SS: Total, Treatment & Error
+        SS_Total = round(inform$SS_Total,3)
+        SS_Treatment = round(inform$SS_Treatment,3)
+        SS_Error = round(inform$SS_Error,3)
+        
+        
+        
+        ## 1) Create Data Frame for variability
+        
+        condition <- factor(x = c("Explained","Unexplained"), 
+                            levels = c("Unexplained","Explained")) 
+        value <- c(SS_Treatment,SS_Error)
+        percent_var <- c(SS_Treatment/SS_Total,SS_Error/SS_Total)
+        var_df <- data.frame(condition,value,percent_var)
+        
+        
+        ## Create plot based on variability Explained
+        var_df %>% 
+            ggplot( aes( x = 1, y=percent_var, fill=condition)) + 
+            geom_bar( stat="identity",color = 'black') +
+            geom_text(aes(label = percent(percent_var)), position = position_stack(vjust = 0.5), size = 8) +
+            scale_y_continuous(name="", labels = percent) +
+            scale_fill_manual(values=c("#999999", "#E69F00")) +
+            labs(y = 'Total Variability',fill = 'Type of Variability' ) +
+            theme_bw() +
+            theme(axis.title.y = element_blank(),
+                  axis.text.y = element_blank(),
+                  axis.ticks.y = element_blank()) +
+            coord_flip() 
+        
+        
+    })
+    
+    
+    
+    
+    
 }
 
 # Run the application 

@@ -13,7 +13,7 @@ library(scales)
 
 ```{r}
 sample_size_button = 100
-correlation_button = 0.9
+correlation_button = 0.0
 ## 2) Generate Data
 data = mvrnorm(n=sample_size_button, mu=c(0, 0), Sigma=matrix(c(1, 
                                                                 correlation_button,
@@ -75,7 +75,8 @@ var_df <- data.frame(condition,value,percent_var)
 var_df %>% 
   ggplot( aes( x = 1, y=percent_var, fill=condition)) + 
   geom_bar( stat="identity") +
-  
+  geom_text(aes(label = percent(percent_var)), position = position_stack(vjust = 0.5), size = 8) +
+  scale_y_continuous(name="", labels = percent) +
   scale_fill_manual(values=c("#999999", "#E69F00")) +
   labs(y = 'Total Variability',fill = 'Type of Variability' ) +
   theme_bw() +
