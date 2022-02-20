@@ -161,10 +161,15 @@ server <- function(input, output) {
             withMathJax(
                 paste0("\\(SST = \\sum_{i=1}^n (y_i - \\bar{y})^2 =\\) ", round(SS_Total, 3)),
                 br(),
+                br(),
                 paste0("\\(SSTr = \\sum_{i=1}^n (\\hat{y}_i - \\bar{y})^2 =\\) ", round(SS_Treatment, 3)),
                 br(),
+                br(),
                 paste0("\\(SSE = \\sum_{i=1}^n (y_i - \\hat{y})^2 =\\) ", round(SS_Error, 3)),
+                br(),
+                br(),
                 br()
+                
             )
         
     })
@@ -193,7 +198,12 @@ server <- function(input, output) {
         
         
         withMathJax(
+            paste0("Metrics"),
+            br(),
+            br(),
             paste0("\\(R^2 = \\frac{SSTr}{SST} = \\frac{", SS_Treatment,"}{",SS_Total, "} = ", r_square," \\) " ),
+            br(),
+            br(),
             paste0("\\(s_e = \\sqrt{\\frac{\\sum_{i=1}^n (y_i - \\hat{y})^2}{n-2}} = 
                                            \\sqrt{\\frac{SSE}{n-2}} = 
                                            \\sqrt{\\frac{",SS_Error,"}{",sample_size_button - 2,"}} = ",s_e," \\) ")
