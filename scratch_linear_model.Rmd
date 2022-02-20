@@ -7,6 +7,7 @@ output: html_document
 ```{r}
 library(MASS)
 suppressPackageStartupMessages(library(tidyverse))
+library(scales)
 ```
 
 
@@ -62,23 +63,28 @@ c(SS_Error,SS_Treatment)
 
 ```{r}
 ## 1) Create Data Frame for variability
-total_var <- rep("Total Variability" , 2)  
-condition <- c("Explained","Unexplained") 
+ 
+condition <- factor(x = c("Explained","Unexplained"), 
+                    levels = c("Unexplained","Explained")) 
 value <- c(SS_Treatment,SS_Error)
-var_df <- data.frame(total_var,condition,value)
+percent_var <- c(SS_Treatment/SS_Total,SS_Error/SS_Total)
+var_df <- data.frame(condition,value,percent_var)
 
 
 ## Create plot based on variability Explained
 var_df %>% 
-  ggplot( aes( x = total_var, y=value, fill=condition)) + 
-  geom_bar( stat="identity",position = position_fill(reverse = TRUE)) +
+  ggplot( aes( x = 1, y=percent_var, fill=condition)) + 
+  geom_bar( stat="identity") +
+  
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  coord_flip() +
-  # geom_vline(xintercept = SS_Treatment,type = 'dashed') +
   labs(y = 'Total Variability',fill = 'Type of Variability' ) +
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())
+        axis.ticks.y = element_blank()) +
+  coord_flip() 
+
+
 ```
+
 
