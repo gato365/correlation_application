@@ -46,8 +46,11 @@ ui <- fluidPage(
             
             
             ## 3) Checkbox - Display regression line
-            checkboxInput('line', 
+            checkboxInput('reg_line', 
                           label = h3('Display Linear Line:'),
+                          value = FALSE),
+            checkboxInput('mean_line', 
+                          label = h3(paste0('Display ','\\(\\bar{y}\\)') ),
                           value = FALSE),
             
             
@@ -83,13 +86,15 @@ server <- function(input, output) {
         ## 1) Get sample size, Correlation, display line
         sample_size = input$sample_size
         correlation = input$correlation
-        line = input$line
+        reg_line = input$reg_line
         
         ## 2) Generate Data
         data = mvrnorm(n=sample_size, 
                        mu=c(0, 0), 
-                       Sigma=matrix(c(1, correlation, 
-                                      correlation, 1),nrow=2), 
+                       Sigma=matrix(c(1, 
+                                      correlation, 
+                                      correlation, 
+                                      1),nrow=2), 
                        empirical=TRUE)
         
         ## 3) Turn Data into data frame
@@ -109,7 +114,7 @@ server <- function(input, output) {
         SS_Treatment = sum((y_hat - y_mean)^2)
         
         
-        return(list(df = df,line = line,
+        return(list(df = df,reg_line = reg_line,
                     SS_Total = SS_Total,
                     SS_Treatment = SS_Treatment,
                     SS_Error = SS_Error,
@@ -125,7 +130,7 @@ server <- function(input, output) {
         inform <- inform()
         ## 1) Gather df & display line
         df = inform$df
-        line_button = inform$line
+        line_button = inform$reg_line
         
     
         
