@@ -13,6 +13,7 @@ suppressPackageStartupMessages(library(tidyverse))
 library(rmarkdown)
 library(knitr)
 library(pander)
+library(scales)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
